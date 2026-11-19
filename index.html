@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI 法文文化翻譯官 | 跨領域 AI 專題</title>
-    <!-- 引入 Tailwind CSS 讓介面瞬間變得很現代、有質感 -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 min-h-screen font-sans text-slate-800">
@@ -16,7 +15,7 @@
                 <h1 class="text-3xl font-bold flex items-center gap-2">
                     <span>🇫🇷</span> AI 法文文化翻譯官
                 </h1>
-                <p class="text-indigo-200 text-sm mt-1">翻譯文字容易，理解文化難嗎？帶你避開法文溝通中的文化黑洞與社交地雷。</p>
+                <p class="text-indigo-200 text-sm mt-1">翻譯文字容易，理解文化難嗎？結合 RAG 知識庫與即時 AI 語境分析。</p>
             </div>
             <div class="mt-4 md:mt-0 bg-indigo-800 px-4 py-2 rounded-lg text-xs border border-indigo-700">
                 🏆 2026 全國 AI 專題創意競賽 (跨領域組)
@@ -32,32 +31,48 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2">🎯 選擇對話與社交場景：</label>
-                    <select id="scenarioSelect" class="w-auto px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-                        <option value="日常社交與聚會">日常社交與聚會</option>
-                        <option value="商業正式交流">商業正式交流</option>
-                        <option value="餐廳與日常購物">餐廳與日常購物</option>
-                        <option value="職場與面試">職場與面試</option>
+                    <select id="scenarioSelect" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                        <option value="日常社交與聚會">日常社交與聚會 (朋友/同儕)</option>
+                        <option value="商業正式交流">商業正式交流 (客戶/合作夥伴)</option>
+                        <option value="餐廳與日常購物">餐廳與日常購物 (服務人員)</option>
+                        <option value="職場與面試">職場與面試 (主管/面試官)</option>
+                        <option value="校園與教授互動">校園與教授互動 (師長/行政人員)</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">⚡ 快速測試範例：</label>
-                    <button onclick="fillExample()" class="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-3 py-2 rounded-lg hover:bg-indigo-100 transition font-medium">
-                        ✨ 帶入範例：「我今天不想去參加派對，你自己去吧。」
-                    </button>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">⚡ 快速測試範例（點擊帶入）：</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="fillExample('我今天不想去參加派對，你自己去吧。', '日常社交與聚會')" class="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-3 py-2 rounded-lg hover:bg-indigo-100 transition font-medium">
+                            拒絕邀約
+                        </button>
+                        <button onclick="fillExample('老闆，我要點一份牛排跟一杯紅酒。', '餐廳與日常購物')" class="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-3 py-2 rounded-lg hover:bg-indigo-100 transition font-medium">
+                            餐廳點餐
+                        </button>
+                        <button onclick="fillExample('教授你好，我想問你這週五有沒有空？', '校園與教授互動')" class="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-3 py-2 rounded-lg hover:bg-indigo-100 transition font-medium">
+                            寫信問教授
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">請輸入你想翻譯的中文句子或直白法文：</label>
-                <textarea id="userInput" rows="3" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-700" placeholder="例如：我不想去、我要這個、你好嗎..."></textarea>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">請輸入任何你想翻譯的中文句子或法文：</label>
+                <textarea id="userInput" rows="3" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-700" placeholder="輸入任何句子，AI 將即時為你進行文化語境轉換與避雷分析..."></textarea>
             </div>
 
-            <button onclick="analyzeText()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition shadow-md flex justify-center items-center gap-2">
-                <span>🚀 啟動 AI 文化深度解析</span>
+            <button id="submitBtn" onclick="analyzeText()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition shadow-md flex justify-center items-center gap-2">
+                <span>🚀 啟動即時 AI 文化深度解析</span>
             </button>
         </div>
 
-        <!-- 輸出結果面板 (預設隱藏) -->
+        <!-- 載入中提示 -->
+        <div id="loadingPanel" class="hidden bg-white border border-indigo-100 rounded-2xl p-8 text-center space-y-3 shadow-sm">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent"></div>
+            <p class="text-indigo-900 font-semibold">🔍 正在檢索法國文化知識庫並透過 AI 引擎進行語境重構...</p>
+            <p class="text-xs text-slate-500">分析敬語規範 (Tu / Vous)、社交委婉度與文化潛台詞中</p>
+        </div>
+
+        <!-- 輸出結果面板 -->
         <div id="resultPanel" class="hidden space-y-6">
             
             <!-- 雙欄對比 -->
@@ -66,12 +81,12 @@
                 <div class="bg-red-50 border border-red-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex items-center gap-2 text-red-700 font-bold text-lg mb-3">
-                            <span>❌</span> 通道 A：傳統直譯結果
+                            <span>❌</span> 通道 A：傳統機器直譯（易踩雷）
                         </div>
-                        <div id="literalText" class="text-red-900 bg-white p-4 rounded-xl border border-red-100 mb-4 text-base font-medium"></div>
+                        <div id="literalText" class="text-red-900 bg-white p-4 rounded-xl border border-red-100 mb-4 text-base font-medium leading-relaxed"></div>
                     </div>
                     <p class="text-xs text-red-600 bg-red-100/60 p-2.5 rounded-lg">
-                        💡 <b>缺點說明：</b> 生硬、缺乏當地社交脈絡，在法國人耳中聽起來容易引起誤會或不禮貌。
+                        💡 <b>直譯風險：</b> 僅做字面轉換，忽略法國社交禮節與語氣緩衝，容易顯得生硬或失禮。
                     </p>
                 </div>
 
@@ -79,9 +94,9 @@
                 <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex items-center gap-2 text-emerald-700 font-bold text-lg mb-3">
-                            <span>🏆</span> 通道 B：AI 文化翻譯官解析
+                            <span>🏆</span> 通道 B：AI 文化翻譯官（道地表達）
                         </div>
-                        <div id="culturalText" class="text-emerald-900 bg-white p-4 rounded-xl border border-emerald-100 mb-4 text-lg font-bold"></div>
+                        <div id="culturalText" class="text-emerald-900 bg-white p-4 rounded-xl border border-emerald-100 mb-4 text-lg font-bold leading-relaxed"></div>
                         
                         <!-- 語音朗讀按鈕 -->
                         <div class="mb-4">
@@ -93,7 +108,7 @@
 
                     <div class="flex items-center justify-between bg-emerald-100/60 p-3 rounded-lg text-sm">
                         <span class="text-emerald-800 font-semibold">⚠️ 社交踩雷風險指數：</span>
-                        <span id="riskBadge" class="px-3 py-1 bg-amber-500 text-white rounded-full text-xs font-bold">中度風險</span>
+                        <span id="riskBadge" class="px-3 py-1 bg-amber-500 text-white rounded-full text-xs font-bold">評估中</span>
                     </div>
                 </div>
             </div>
@@ -101,130 +116,150 @@
             <!-- RAG 深度文化解析 -->
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
                 <h3 class="text-lg font-bold text-indigo-900 flex items-center gap-2">
-                    <span>📖</span> 深度文化與潛台詞解析 (RAG 知識庫支援)
+                    <span>📖</span> 深度文化與潛台詞解析（RAG 知識庫檢索支援）
                 </h3>
-                <div id="analysisText" class="text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100 leading-relaxed text-sm"></div>
+                <div id="analysisText" class="text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100 leading-relaxed text-base"></div>
             </div>
 
         </div>
 
     </main>
 
-    <!-- 頁尾 -->
     <footer class="text-center py-6 text-slate-400 text-xs">
-        <p>2026 全國 AI 專題創意競賽 | 跨領域組參賽作品</p>
+        <p>2026 全國 AI 專題創意競賽 | 跨領域組參賽作品 (Powered by Non-PRC Open AI Engine & Cultural RAG)</p>
     </footer>
 
-    <!-- JavaScript 智慧對應邏輯 -->
     <script>
-        // 內建的示範知識庫 (法文系隊友後續可以直接在這裡擴充或改成從 CSV 讀取)
-        const knowledgeBase = [
-            {
-                keywords: ["不要", "不想", "派對", "去"],
-                scenario: "日常社交與聚會",
-                literal: "Je ne veux pas y aller. (直譯：我不想去那裡。語氣強烈且像在生氣)",
-                cultural: "Ça ne me dit rien. / Une prochaine fois !",
-                risk: "高風險雷區",
-                analysis: "直接說 'Je ne veux pas' 在法文中語氣過於強烈，容易被解讀為具有敵意或拒人於千里之外。法國人習慣用委婉的慣用語如 'Ça ne me dit rien'（這對我沒什麼吸引力）或 'Une prochaine fois !'（下次吧！）來既拒絕又給彼此台階下。"
-            },
-            {
-                keywords: ["你好", "我是", "初次"],
-                scenario: "日常社交與聚會",
-                literal: "Bonjour, je suis [名字] (直接用 tu 稱呼對方)",
-                cultural: "Bonjour, enchanté(e). (務必使用 Vous)",
-                risk: "高風險雷區",
-                analysis: "在法國社交場合中，對初次見面、長輩或不熟的人絕對不能直接使用 'tu'（你），必須使用 'vous'（您）。誤用 tu 會被法國人視為極度傲慢與缺乏教養。"
-            },
-            {
-                keywords: ["我要", "這個", "點餐", "餐廳"],
-                scenario: "餐廳與日常購物",
-                literal: "Je veux ça. (直譯：我想要這個。語氣像在大聲命令)",
-                cultural: "Je vais prendre... s'il vous plaît.",
-                risk: "中度風險",
-                analysis: "法式餐廳點餐非常重視禮貌。直接說 'Je veux'（我想要）是非常不禮貌的命令句。法國人習慣使用未來式 'Je vais prendre...'（我將選擇...）並一定要加上 's'利' s'il vous plaît'（請）。"
-            },
-            {
-                keywords: ["好吃", "讚賞", "食物"],
-                scenario: "餐廳與日常購物",
-                literal: "C'est bon. (直譯：這很好吃/這不錯)",
-                cultural: "C'est un véritable délice.",
-                risk: "低風險",
-                analysis: "法國人對美食有極高的品味與講究。單純說 'c'est bon' 聽起來很敷衍（像在對小孩子說話）。使用 'délice' 或讚嘆食物的烹調細節，能讓法國友人感受到你的誠意與品味。"
-            },
-            {
-                keywords: ["幫忙", "請求"],
-                scenario: "職場與面試",
-                literal: " Aide-moi. (直譯：幫我！)",
-                cultural: "Oseriez-vous me rendre service, s'il vous plaît ?",
-                risk: "高風險雷區",
-                analysis: "法文中請求他人協助時，很少直接使用命令句。通常會使用條件式（如 Oseriez-vous...）或委婉的請求句型，並搭配眼神接觸與適當的尊稱。"
-            }
+        // 內建法國文化 RAG 知識庫（作為系統檢索的參考上下文，確保 AI 回答符合法國文化標準）
+        const culturalKnowledgeBase = [
+            "【敬語規範】法國社會極度重視 Tu（你）與 Vous（您）的區別。對長輩、教授、主管、陌生人、店員、初次見面者，必須使用 Vous；僅對平輩朋友、家人或小孩使用 Tu。",
+            "【打招呼禮儀】在法國進入任何商店、餐廳或向人問路/請求協助前，必須先說 Bonjour（白天）或 Bonsoir（晚上），直接切入正題會被視為極度無禮。",
+            "【點餐與購物】法文點餐絕不能直接說 Je veux（我想要，語氣像命令），應使用條件式或未來式委婉表達，例如 Je voudrais... 或 Je vais prendre...，且句尾務必加上 s'il vous plaît（請）。",
+            "【拒絕與委婉表達】法國人拒絕邀約時，避免直接說 Je ne veux pas（我不要，帶有敵意），常用 Ça ne me dit rien（這對我沒什麼吸引力）或 Une prochaine fois（下次吧）來保留雙方台階。",
+            "【書信與師長互動】寫信或開口向法國教授請教時，開頭應使用稱謂 Monsieur / Madame（不直接叫名字），結尾需加上禮貌致意（如 Cordialement 或 Bien à vous）。"
         ];
 
-        function fillExample() {
-            document.getElementById('userInput').value = "我今天不想去參加派對，你自己去吧。";
-            document.getElementById('scenarioSelect').value = "日常社交與聚會";
+        function fillExample(text, scenario) {
+            document.getElementById('userInput').value = text;
+            document.getElementById('scenarioSelect').value = scenario;
         }
 
         let currentFrenchText = "";
 
-        function analyzeText() {
+        async function analyzeText() {
             const input = document.getElementById('userInput').value.trim();
             const scenario = document.getElementById('scenarioSelect').value;
+            const btn = document.getElementById('submitBtn');
             
             if(!input) {
                 alert("請先輸入想要翻譯的內容！");
                 return;
             }
 
-            // 顯示結果面板
-            document.getElementById('resultPanel').classList.remove('hidden');
+            // UI 狀態切換為載入中
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('resultPanel').classList.add('hidden');
+            document.getElementById('loadingPanel').classList.remove('hidden');
 
-            // 智慧比對知識庫，若找不到則給予通用的智慧模擬解析
-            let matched = knowledgeBase.find(item => 
-                input.split('').some(char => item.keywords.includes(char))
-            );
+            // 組合檢索到的文化知識庫作為 RAG Context
+            const ragContext = culturalKnowledgeBase.join("\n");
 
-            if (!matched) {
-                matched = {
-                    literal: "Je traduire ça directement. (字面直譯可能忽略了法文的語意情境)",
-                    cultural: "Permettez-moi m'exprimer autrement, s'il vous plaît.",
-                    risk: "中度風險",
-                    analysis: `在「${scenario}」情境下，這句話雖然字面上可以被理解，但在法國在地的社交禮儀中，建議注意動詞的選擇與委婉語氣（例如適時使用主動態轉被動態，或是加入尊稱 Vous），以避免觸及法國人對社交禮節的敏感神經。`
-                };
+            const prompt = `你是一位精通台灣文化與法國社會語境的高級法文翻譯專家。
+現在使用者輸入了一句話，並設定了社交情境為：「${scenario}」。
+
+請參考以下【法國文化 RAG 知識庫】：
+${ragContext}
+
+使用者輸入的句子：「${input}」
+
+請針對這句話進行精準的翻譯與文化分析，並嚴格只回傳一個合法的 JSON 物件（不要任何 markdown 標記或額外文字），包含以下 5 個欄位：
+{
+  "literal": "給出一般翻譯軟體逐字直譯的法文句子，並用繁體中文簡短說明這樣講為什麼生硬或容易誤會",
+  "french_only": "結合法國文化與情境後，最道地、得體的純法文句子（只放純法文，不要任何中文或括號，供語音系統朗讀）",
+  "cultural": "給出最道地、得體的法文句子，並在下方用繁體中文標註發音重點或敬語選擇（Tu/Vous）",
+  "risk": "評估原句若直接翻譯在該情境下的社交風險，僅能填寫：低風險、中度風險、高風險雷區",
+  "analysis": "用流暢的台灣繁體中文，深入解析這句話背後的法國文化潛規則、語氣差異以及為什麼要這樣修改（約 80～150 字）"
+}`;
+
+            try {
+                // 呼叫免 API Key 的雲端開源 AI 介面 (使用非中資的 openai/llama 路由)
+                const response = await fetch('https://text.pollinations.ai/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        messages: [
+                            { role: 'system', content: '你是一個只輸出純 JSON 格式的法文文化翻譯助手，所有解說必須使用台灣繁體中文。' },
+                            { role: 'user', content: prompt }
+                        ],
+                        model: 'openai', // 路由至非中資標準模型
+                        jsonMode: true
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`伺服器回應異常 (${response.status})`);
+                }
+
+                const rawText = await response.text();
+                
+                // 提取 JSON 區塊並解析
+                const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) {
+                    throw new Error("無法解析 AI 回傳的結構化資料");
+                }
+
+                const data = JSON.parse(jsonMatch[0]);
+
+                // 填入真實 AI 生成的結果
+                document.getElementById('literalText').innerText = data.literal || "解析完成";
+                document.getElementById('culturalText').innerText = data.cultural || data.french_only;
+                document.getElementById('analysisText').innerText = data.analysis || "已完成文化語境分析。";
+                
+                // 設定供語音朗讀的純法文
+                currentFrenchText = data.french_only || "";
+
+                // 設定風險標籤樣式
+                const riskBadge = document.getElementById('riskBadge');
+                const riskText = data.risk || "中度風險";
+                riskBadge.innerText = riskText;
+                
+                if(riskText.includes("高")) {
+                    riskBadge.className = "px-3 py-1 bg-red-600 text-white rounded-full text-xs font-bold";
+                } else if(riskText.includes("中")) {
+                    riskBadge.className = "px-3 py-1 bg-amber-500 text-white rounded-full text-xs font-bold";
+                } else {
+                    riskBadge.className = "px-3 py-1 bg-emerald-600 text-white rounded-full text-xs font-bold";
+                }
+
+                // 顯示結果面板
+                document.getElementById('loadingPanel').classList.add('hidden');
+                document.getElementById('resultPanel').classList.remove('hidden');
+                document.getElementById('resultPanel').scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                console.error(error);
+                alert("AI 連線忙碌中，請稍等幾秒後再點擊一次按鈕重試！\n錯誤細節：" + error.message);
+                document.getElementById('loadingPanel').classList.add('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
-
-            // 填入畫面
-            document.getElementById('literalText').innerText = matched.literal;
-            document.getElementById('culturalText').innerText = matched.cultural;
-            document.getElementById('analysisText').innerText = matched.analysis;
-            
-            // 儲存當前法文供語音朗讀使用
-            currentFrenchText = matched.cultural.split('/')[0].trim();
-
-            // 設定風險標籤顏色
-            const riskBadge = document.getElementById('riskBadge');
-            riskBadge.innerText = matched.risk;
-            if(matched.risk.includes("高")) {
-                riskBadge.className = "px-3 py-1 bg-red-600 text-white rounded-full text-xs font-bold";
-            } else if(matched.risk.includes("中")) {
-                riskBadge.className = "px-3 py-1 bg-amber-500 text-white rounded-full text-xs font-bold";
-            } else {
-                riskBadge.className = "px-3 py-1 bg-emerald-600 text-white rounded-full text-xs font-bold";
-            }
-
-            // 平滑捲動到結果區
-            document.getElementById('resultPanel').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // 瀏覽器內建的 Web Speech API 朗讀法文（完全免安裝、免 API Key）
         function speakFrench() {
-            if (!currentFrenchText) return;
+            if (!currentFrenchText) {
+                alert("目前沒有可朗讀的法文句子！");
+                return;
+            }
             
             if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // 停止正在播放的語音
                 const utterance = new SpeechSynthesisUtterance(currentFrenchText);
-                utterance.lang = 'fr-FR'; // 設定為法國法文發音
-                utterance.rate = 0.9; // 稍微放慢語速，方便聆聽
+                utterance.lang = 'fr-FR';
+                utterance.rate = 0.9;
                 window.speechSynthesis.speak(utterance);
             } else {
                 alert("您的瀏覽器不支援語音朗讀功能，建議使用 Chrome 或 Edge！");
