@@ -15,7 +15,7 @@
                 <h1 class="text-3xl font-bold flex items-center gap-2">
                     <span>🇫🇷</span> AI 法文文化翻譯官
                 </h1>
-                <p class="text-indigo-200 text-sm mt-1">翻譯文字容易，理解文化難嗎？結合 RAG 知識庫與即時 AI 語境分析。</p>
+                <p class="text-indigo-200 text-sm mt-1">翻譯文字容易，理解文化難嗎？結合 RAG 知識庫、陰陽性語法與即時 AI 語境分析。</p>
             </div>
             <div class="mt-4 md:mt-0 bg-indigo-800 px-4 py-2 rounded-lg text-xs border border-indigo-700">
                 🏆 2026 全國 AI 專題創意競賽 (跨領域組)
@@ -27,11 +27,13 @@
     <main class="max-w-5xl mx-auto p-6 md:p-8 space-y-6">
 
         <!-- 控制台與輸入卡片 -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5">
+            
+            <!-- 語境參數設定列（新增性別選擇） -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">🎯 選擇對話與社交場景：</label>
-                    <select id="scenarioSelect" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">🎯 對話與社交場景：</label>
+                    <select id="scenarioSelect" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white text-sm">
                         <option value="日常社交與聚會">日常社交與聚會 (朋友/同儕)</option>
                         <option value="商業正式交流">商業正式交流 (客戶/合作夥伴)</option>
                         <option value="餐廳與日常購物">餐廳與日常購物 (服務人員)</option>
@@ -39,37 +41,54 @@
                         <option value="校園與教授互動">校園與教授互動 (師長/行政人員)</option>
                     </select>
                 </div>
+
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">⚡ 快速測試範例（點擊帶入）：</label>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="fillExample('我今天不想去參加派對，你自己去吧。', '日常社交與聚會')" class="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-3 py-2 rounded-lg hover:bg-indigo-100 transition font-medium">
-                            拒絕邀約
-                        </button>
-                        <button onclick="fillExample('老闆，我要點一份牛排跟一杯紅酒。', '餐廳與日常購物')" class="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-3 py-2 rounded-lg hover:bg-indigo-100 transition font-medium">
-                            餐廳點餐
-                        </button>
-                        <button onclick="fillExample('教授你好，我想問你這週五有沒有空？', '校園與教授互動')" class="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 px-3 py-2 rounded-lg hover:bg-indigo-100 transition font-medium">
-                            寫信問教授
-                        </button>
-                    </div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">🗣️ 說話者性別 (決定陰陽性變化)：</label>
+                    <select id="speakerGender" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white text-sm">
+                        <option value="女性 (陰性變化 Féminin)">女性 (字尾常加 e / 陰性變化)</option>
+                        <option value="男性 (陽性變化 Masculin)">男性 (陽性原形變化)</option>
+                    </select>
                 </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">👤 對話對象性別 (稱謂與敬語)：</label>
+                    <select id="listenerGender" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white text-sm">
+                        <option value="女性 (Madame / Mademoiselle)">女性 (Madame)</option>
+                        <option value="男性 (Monsieur)">男性 (Monsieur)</option>
+                        <option value="多人或未知對象">多人或未知對象</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 快速測試範例 -->
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 flex flex-wrap items-center gap-2">
+                <span class="text-xs font-semibold text-slate-600">⚡ 快速測試範例：</span>
+                <button onclick="fillExample('我今天好累，不想去參加派對了。', '日常社交與聚會', '女性 (陰性變化 Féminin)', '女性 (Madame / Mademoiselle)')" class="text-xs bg-white text-indigo-600 border border-indigo-200 px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition font-medium shadow-xs">
+                    女生說「我好累」(陰陽性+委婉拒絕)
+                </button>
+                <button onclick="fillExample('很高興認識你，我是新來的實習生。', '職場與面試', '女性 (陰性變化 Féminin)', '男性 (Monsieur)')" class="text-xs bg-white text-indigo-600 border border-indigo-200 px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition font-medium shadow-xs">
+                    職場自我介紹 (敬語+性別拼寫)
+                </button>
+                <button onclick="fillExample('老闆，我要點一份牛排跟一杯紅酒。', '餐廳與日常購物', '男性 (陽性變化 Masculin)', '男性 (Monsieur)')" class="text-xs bg-white text-indigo-600 border border-indigo-200 px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition font-medium shadow-xs">
+                    餐廳點餐禮儀
+                </button>
             </div>
 
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">請輸入任何你想翻譯的中文句子或法文：</label>
-                <textarea id="userInput" rows="3" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-700" placeholder="輸入任何句子，AI 將即時為你進行文化語境轉換與避雷分析..."></textarea>
+                <textarea id="userInput" rows="3" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-700" placeholder="例如：我今天好累、我準備好了、很高興認識你..."></textarea>
             </div>
 
             <button id="submitBtn" onclick="analyzeText()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition shadow-md flex justify-center items-center gap-2">
-                <span>🚀 啟動即時 AI 文化深度解析</span>
+                <span>🚀 啟動即時 AI 文化與性別語境解析</span>
             </button>
         </div>
 
         <!-- 載入中提示 -->
         <div id="loadingPanel" class="hidden bg-white border border-indigo-100 rounded-2xl p-8 text-center space-y-3 shadow-sm">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent"></div>
-            <p class="text-indigo-900 font-semibold">🔍 正在檢索法國文化知識庫並透過 AI 引擎進行語境重構...</p>
-            <p class="text-xs text-slate-500">分析敬語規範 (Tu / Vous)、社交委婉度與文化潛台詞中</p>
+            <p class="text-indigo-900 font-semibold">🔍 正在檢索法國文化知識庫並分析陰陽性變化與敬語...</p>
+            <p class="text-xs text-slate-500">結合說話者性別、Tu/Vous 敬語規範與社交潛台詞重構中</p>
         </div>
 
         <!-- 輸出結果面板 -->
@@ -81,12 +100,12 @@
                 <div class="bg-red-50 border border-red-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex items-center gap-2 text-red-700 font-bold text-lg mb-3">
-                            <span>❌</span> 通道 A：傳統機器直譯（易踩雷）
+                            <span>❌</span> 通道 A：傳統機器直譯（忽略語境）
                         </div>
                         <div id="literalText" class="text-red-900 bg-white p-4 rounded-xl border border-red-100 mb-4 text-base font-medium leading-relaxed"></div>
                     </div>
                     <p class="text-xs text-red-600 bg-red-100/60 p-2.5 rounded-lg">
-                        💡 <b>直譯風險：</b> 僅做字面轉換，忽略法國社交禮節與語氣緩衝，容易顯得生硬或失禮。
+                        💡 <b>直譯盲點：</b> 傳統翻譯常預設為「陽性（男性）」且缺乏敬語與文化緩衝，容易產生文法性別錯誤或社交失禮。
                     </p>
                 </div>
 
@@ -94,7 +113,7 @@
                 <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex items-center gap-2 text-emerald-700 font-bold text-lg mb-3">
-                            <span>🏆</span> 通道 B：AI 文化翻譯官（道地表達）
+                            <span>🏆</span> 通道 B：AI 文化翻譯官（精準語境）
                         </div>
                         <div id="culturalText" class="text-emerald-900 bg-white p-4 rounded-xl border border-emerald-100 mb-4 text-lg font-bold leading-relaxed"></div>
                         
@@ -116,7 +135,7 @@
             <!-- RAG 深度文化解析 -->
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
                 <h3 class="text-lg font-bold text-indigo-900 flex items-center gap-2">
-                    <span>📖</span> 深度文化與潛台詞解析（RAG 知識庫檢索支援）
+                    <span>📖</span> 深度文化、性別陰陽性與潛台詞解析（RAG 知識庫支援）
                 </h3>
                 <div id="analysisText" class="text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100 leading-relaxed text-base"></div>
             </div>
@@ -130,18 +149,20 @@
     </footer>
 
     <script>
-        // 內建法國文化 RAG 知識庫（作為系統檢索的參考上下文，確保 AI 回答符合法國文化標準）
+        // 內建法國文化 RAG 知識庫（加入陰陽性性別規則）
         const culturalKnowledgeBase = [
-            "【敬語規範】法國社會極度重視 Tu（你）與 Vous（您）的區別。對長輩、教授、主管、陌生人、店員、初次見面者，必須使用 Vous；僅對平輩朋友、家人或小孩使用 Tu。",
-            "【打招呼禮儀】在法國進入任何商店、餐廳或向人問路/請求協助前，必須先說 Bonjour（白天）或 Bonsoir（晚上），直接切入正題會被視為極度無禮。",
-            "【點餐與購物】法文點餐絕不能直接說 Je veux（我想要，語氣像命令），應使用條件式或未來式委婉表達，例如 Je voudrais... 或 Je vais prendre...，且句尾務必加上 s'il vous plaît（請）。",
-            "【拒絕與委婉表達】法國人拒絕邀約時，避免直接說 Je ne veux pas（我不要，帶有敵意），常用 Ça ne me dit rien（這對我沒什麼吸引力）或 Une prochaine fois（下次吧）來保留雙方台階。",
-            "【書信與師長互動】寫信或開口向法國教授請教時，開頭應使用稱謂 Monsieur / Madame（不直接叫名字），結尾需加上禮貌致意（如 Cordialement 或 Bien à vous）。"
+            "【陰陽性性別變化】法文日常對話有嚴格的陰陽性區分。形容詞、部分過去分詞與職業稱謂必須根據「說話者」或「對話對象」的生理性別改變拼法與發音。例如「我累了」，男生說 Je suis fatigué，女生則必須在字尾加 e 寫成 Je suis fatiguée；「很高興認識你」，女生要說 Enchantée。",
+            "【敬語規範 Tu vs Vous】法國社會極度重視 Tu（你）與 Vous（您）的區別。對長輩、教授、主管、陌生人、店員、初次見面者，必須使用 Vous；僅對平輩朋友、家人或小孩使用 Tu。",
+            "【稱謂禮儀】稱呼女性通常統一使用 Madame（女士，現代法國職場與日常已極少用 Mademoiselle 小姐，避免涉及婚姻狀態隱私），稱呼男性使用 Monsieur（先生）。",
+            "【打招呼與點餐禮儀】進入商店或向人求助前必須先說 Bonjour；點餐絕不能直接說 Je veux（我想要，像命令），應使用 Je voudrais... 或 Je vais prendre... 並加上 s'il vous plaît（請）。",
+            "【拒絕與委婉表達】法國人拒絕邀約時，避免直接說 Je ne veux pas（我不要，帶有敵意），常用 Ça ne me dit rien（這對我沒什麼吸引力）或 Une prochaine fois（下次吧）來保留台階。"
         ];
 
-        function fillExample(text, scenario) {
+        function fillExample(text, scenario, speaker, listener) {
             document.getElementById('userInput').value = text;
             document.getElementById('scenarioSelect').value = scenario;
+            document.getElementById('speakerGender').value = speaker;
+            document.getElementById('listenerGender').value = listener;
         }
 
         let currentFrenchText = "";
@@ -149,6 +170,8 @@
         async function analyzeText() {
             const input = document.getElementById('userInput').value.trim();
             const scenario = document.getElementById('scenarioSelect').value;
+            const speaker = document.getElementById('speakerGender').value;
+            const listener = document.getElementById('listenerGender').value;
             const btn = document.getElementById('submitBtn');
             
             if(!input) {
@@ -156,34 +179,35 @@
                 return;
             }
 
-            // UI 狀態切換為載入中
             btn.disabled = true;
             btn.classList.add('opacity-50', 'cursor-not-allowed');
             document.getElementById('resultPanel').classList.add('hidden');
             document.getElementById('loadingPanel').classList.remove('hidden');
 
-            // 組合檢索到的文化知識庫作為 RAG Context
             const ragContext = culturalKnowledgeBase.join("\n");
 
             const prompt = `你是一位精通台灣文化與法國社會語境的高級法文翻譯專家。
-現在使用者輸入了一句話，並設定了社交情境為：「${scenario}」。
+現在使用者輸入了一句話，並設定了以下語境參數：
+- 社交場景：「${scenario}」
+- 說話者性別：「${speaker}」
+- 對話對象性別：「${listener}」
 
-請參考以下【法國文化 RAG 知識庫】：
+請務必參考以下【法國文化 RAG 知識庫】：
 ${ragContext}
 
 使用者輸入的句子：「${input}」
 
-請針對這句話進行精準的翻譯與文化分析，並嚴格只回傳一個合法的 JSON 物件（不要任何 markdown 標記或額外文字），包含以下 5 個欄位：
+請針對這句話進行精準的翻譯與文化分析，**特別注意根據「說話者性別」與「對話對象性別」調整法文的陰陽性拼寫（例如女性字尾加 e）與稱謂（Monsieur/Madame）**。
+嚴格只回傳一個合法的 JSON 物件（不要任何 markdown 標記或額外文字），包含以下 5 個欄位：
 {
-  "literal": "給出一般翻譯軟體逐字直譯的法文句子，並用繁體中文簡短說明這樣講為什麼生硬或容易誤會",
-  "french_only": "結合法國文化與情境後，最道地、得體的純法文句子（只放純法文，不要任何中文或括號，供語音系統朗讀）",
-  "cultural": "給出最道地、得體的法文句子，並在下方用繁體中文標註發音重點或敬語選擇（Tu/Vous）",
+  "literal": "給出一般翻譯軟體逐字直譯（通常預設陽性且無敬語）的法文句子，並用繁體中文說明這樣講在性別文法或禮貌上有什麼問題",
+  "french_only": "結合法國文化、場景與說話者性別後的「純法文道地句子」（只放純法文，不要任何中文或括號，供語音系統朗讀）",
+  "cultural": "給出最道地、得體的法文句子，並在下方用繁體中文標註陰陽性拼寫變化（如字尾加 e）與敬語（Tu/Vous）重點",
   "risk": "評估原句若直接翻譯在該情境下的社交風險，僅能填寫：低風險、中度風險、高風險雷區",
-  "analysis": "用流暢的台灣繁體中文，深入解析這句話背後的法國文化潛規則、語氣差異以及為什麼要這樣修改（約 80～150 字）"
+  "analysis": "用流暢的台灣繁體中文，深入解析這句話背後的法國文化潛規則、陰陽性性別文法變化原因以及語氣差異（約 100～150 字）"
 }`;
 
             try {
-                // 呼叫免 API Key 的雲端開源 AI 介面 (使用非中資的 openai/llama 路由)
                 const response = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
                     headers: {
@@ -194,7 +218,7 @@ ${ragContext}
                             { role: 'system', content: '你是一個只輸出純 JSON 格式的法文文化翻譯助手，所有解說必須使用台灣繁體中文。' },
                             { role: 'user', content: prompt }
                         ],
-                        model: 'openai', // 路由至非中資標準模型
+                        model: 'openai',
                         jsonMode: true
                     })
                 });
@@ -204,8 +228,6 @@ ${ragContext}
                 }
 
                 const rawText = await response.text();
-                
-                // 提取 JSON 區塊並解析
                 const jsonMatch = rawText.match(/\{[\s\S]*\}/);
                 if (!jsonMatch) {
                     throw new Error("無法解析 AI 回傳的結構化資料");
@@ -213,15 +235,12 @@ ${ragContext}
 
                 const data = JSON.parse(jsonMatch[0]);
 
-                // 填入真實 AI 生成的結果
                 document.getElementById('literalText').innerText = data.literal || "解析完成";
                 document.getElementById('culturalText').innerText = data.cultural || data.french_only;
                 document.getElementById('analysisText').innerText = data.analysis || "已完成文化語境分析。";
                 
-                // 設定供語音朗讀的純法文
                 currentFrenchText = data.french_only || "";
 
-                // 設定風險標籤樣式
                 const riskBadge = document.getElementById('riskBadge');
                 const riskText = data.risk || "中度風險";
                 riskBadge.innerText = riskText;
@@ -234,7 +253,6 @@ ${ragContext}
                     riskBadge.className = "px-3 py-1 bg-emerald-600 text-white rounded-full text-xs font-bold";
                 }
 
-                // 顯示結果面板
                 document.getElementById('loadingPanel').classList.add('hidden');
                 document.getElementById('resultPanel').classList.remove('hidden');
                 document.getElementById('resultPanel').scrollIntoView({ behavior: 'smooth' });
@@ -256,7 +274,7 @@ ${ragContext}
             }
             
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // 停止正在播放的語音
+                window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(currentFrenchText);
                 utterance.lang = 'fr-FR';
                 utterance.rate = 0.9;
