@@ -15,15 +15,20 @@
                 <h1 class="text-3xl font-bold flex items-center gap-2">
                     <span>🇫🇷</span> AI 法文文化翻譯官
                 </h1>
-                <p class="text-indigo-200 text-sm mt-1">結合 RAG 文化知識庫、陰陽性語法、多段語速朗讀與自動筆記生成</p>
+                <p class="text-indigo-200 text-sm mt-1">結合 RAG 文化知識庫、陰陽性語法、語音朗讀與歷史登錄記錄管理</p>
             </div>
             <div class="flex flex-col items-end gap-2">
                 <div class="bg-indigo-800 px-4 py-1.5 rounded-lg text-xs border border-indigo-700">
                     🏆 2026 全國 AI 專題創意競賽 (跨領域組)
                 </div>
-                <button onclick="toggleNotebookModal()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1.5">
-                    <span>📒</span> 查看系列學習筆記 (<span id="noteCount">0</span>)
-                </button>
+                <div class="flex gap-2">
+                    <button onclick="scrollToSection('historySection')" class="bg-indigo-700 hover:bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1.5">
+                        <span>📜</span> 歷史登錄記錄 (<span id="historyCount">0</span>)
+                    </button>
+                    <button onclick="scrollToSection('notebookSection')" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1.5">
+                        <span>📒</span> 系列筆記本 (<span id="noteCount">0</span>)
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -87,9 +92,9 @@
                 <textarea id="userInput" rows="3" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-700" placeholder="輸入任意句子，AI 將即時針對你的輸入進行獨立語境分析..."></textarea>
             </div>
 
-            <!-- 進階引擎設定 (可折疊，預設自動連線免費公開引擎) -->
+            <!-- 進階引擎設定 -->
             <details class="text-xs text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                <summary class="cursor-pointer font-medium text-slate-700">⚙️ 進階 AI 引擎設定（若公開節點尖峰擁擠，可在此貼上免費 Gemini API Key 確保 100% 獨立算力）</summary>
+                <summary class="cursor-pointer font-medium text-slate-700">⚙️ 進階 AI 引擎設定（若需自訂 Gemini API Key 可在此輸入）</summary>
                 <div class="mt-2 flex gap-2">
                     <input type="password" id="customApiKey" placeholder="選填：貼上 Google Gemini API Key (AIzaSy...)" class="flex-1 px-3 py-1.5 border border-slate-300 rounded bg-white text-slate-700">
                 </div>
@@ -103,22 +108,22 @@
         <!-- 載入中提示 -->
         <div id="loadingPanel" class="hidden bg-white border border-indigo-100 rounded-2xl p-8 text-center space-y-3 shadow-sm">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent"></div>
-            <p class="text-indigo-900 font-semibold">🔍 正在針對您的句子進行獨立文化檢索與陰陽性語法分析...</p>
+            <p class="text-indigo-900 font-semibold">🔍 正在進行獨立文化檢索與陰陽性語法分析...</p>
             <p class="text-xs text-slate-500">動態比對說話者性別、Tu/Vous 敬語規範與社交潛台詞中</p>
         </div>
 
         <!-- 輸出結果面板 -->
         <div id="resultPanel" class="hidden space-y-6">
             
-            <!-- 頂部功能操作列（加入筆記小連結） -->
+            <!-- 頂部功能操作列 -->
             <div class="flex flex-wrap justify-between items-center bg-indigo-50 border border-indigo-200 px-5 py-3 rounded-xl gap-3">
-                <span class="text-sm font-semibold text-indigo-900">✨ 解析完成！想把這句話收錄進你的學習系列筆記嗎？</span>
+                <span class="text-sm font-semibold text-indigo-900">✨ 解析完成！此查詢已自動登錄至歷史記錄。</span>
                 <div class="flex items-center gap-3">
-                    <button onclick="addToNotebook()" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3.5 py-2 rounded-lg shadow-xs transition flex items-center gap-1.5">
-                        <span>➕</span> 加入系列筆記並整理
+                    <button onclick="addToNotebook()" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold px-3.5 py-2 rounded-lg shadow-xs transition flex items-center gap-1.5">
+                        <span>⭐</span> 收藏至系列筆記本
                     </button>
                     <button onclick="copySingleNote()" class="text-xs text-indigo-700 underline hover:text-indigo-900 font-medium">
-                        📋 僅複製此句筆記
+                        📋 複製此句解析
                     </button>
                 </div>
             </div>
@@ -158,9 +163,9 @@
                             <!-- 語速調整按鍵群組 -->
                             <div class="flex items-center gap-2 pt-1 border-t border-emerald-100">
                                 <span class="text-xs font-semibold text-slate-600">🎚️ 調整語速：</span>
-                                <button onclick="setSpeechRate(0.65, this)" class="rate-btn text-xs px-2.5 py-1 rounded border border-slate-300 bg-white text-slate-700 hover:bg-emerald-50">0.65x 慢速跟讀</button>
-                                <button onclick="setSpeechRate(0.95, this)" class="rate-btn text-xs px-2.5 py-1 rounded border border-emerald-600 bg-emerald-600 text-white font-bold">1.0x 正常語速</button>
-                                <button onclick="setSpeechRate(1.25, this)" class="rate-btn text-xs px-2.5 py-1 rounded border border-slate-300 bg-white text-slate-700 hover:bg-emerald-50">1.25x 母語連音</button>
+                                <button onclick="setSpeechRate(0.65, this)" class="rate-btn text-xs px-2.5 py-1 rounded border border-slate-300 bg-white text-slate-700 hover:bg-emerald-50">0.65x 慢速</button>
+                                <button onclick="setSpeechRate(0.95, this)" class="rate-btn text-xs px-2.5 py-1 rounded border border-emerald-600 bg-emerald-600 text-white font-bold">1.0x 正常</button>
+                                <button onclick="setSpeechRate(1.25, this)" class="rate-btn text-xs px-2.5 py-1 rounded border border-slate-300 bg-white text-slate-700 hover:bg-emerald-50">1.25x 連音</button>
                             </div>
                         </div>
                     </div>
@@ -182,18 +187,39 @@
 
         </div>
 
-        <!-- 系列筆記整理區（預設展開或可隨時檢視） -->
+        <!-- 📜 歷史登錄記錄專區 -->
+        <div id="historySection" class="bg-white rounded-2xl shadow-sm border border-indigo-200 p-6 space-y-4">
+            <div class="flex flex-wrap justify-between items-center border-b border-slate-100 pb-3 gap-2">
+                <div>
+                    <h2 class="text-lg font-bold text-indigo-900 flex items-center gap-2">
+                        <span>📜</span> 系統歷史登錄記錄 (Query History Log)
+                    </h2>
+                    <p class="text-xs text-slate-500">自動記錄所有查詢過的句子與分析結果，支援重新載入或清除</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="clearHistory()" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 font-semibold px-3 py-2 rounded-lg transition border border-red-200">
+                        🗑️ 清空所有記錄
+                    </button>
+                </div>
+            </div>
+            
+            <div id="historyList" class="space-y-3 text-sm text-slate-600 max-h-96 overflow-y-auto pr-2">
+                <p class="text-center text-slate-400 py-4 italic">尚無歷史登錄記錄，開始查詢後會自動登錄於此 ✨</p>
+            </div>
+        </div>
+
+        <!-- 📒 系列筆記整理區 -->
         <div id="notebookSection" class="bg-white rounded-2xl shadow-sm border border-amber-200 p-6 space-y-4">
             <div class="flex flex-wrap justify-between items-center border-b border-slate-100 pb-3 gap-2">
                 <div>
                     <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                         <span>📒</span> 我的法文文化系列學習筆記本
                     </h2>
-                    <p class="text-xs text-slate-500">點擊上方解析結果的「加入系列筆記」，即可自動彙整成完整學習講義</p>
+                    <p class="text-xs text-slate-500">點擊上方解析結果的「收藏至系列筆記」，即可彙整成講義</p>
                 </div>
                 <div class="flex gap-2">
                     <button onclick="copyAllNotes()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-lg transition">
-                        📋 一鍵複製全部筆記
+                        📋 複製全部筆記
                     </button>
                     <button onclick="downloadNotesDoc()" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-semibold px-3 py-2 rounded-lg transition shadow-xs">
                         📥 匯出成文件 (.doc)
@@ -202,7 +228,7 @@
             </div>
             
             <div id="notebookList" class="space-y-3 text-sm text-slate-600">
-                <p class="text-center text-slate-400 py-4 italic">目前筆記本還是空的喔！快輸入句子並點擊「加入系列筆記」吧 ✨</p>
+                <p class="text-center text-slate-400 py-4 italic">收藏筆記本目前是空的喔！快去收藏喜歡的句子吧 ✨</p>
             </div>
         </div>
 
@@ -212,7 +238,7 @@
         <p>2026 全國 AI 專題創意競賽 | 跨領域組參賽作品</p>
     </footer>
 
-    <!-- 隱藏的備用音訊播放器 (解決部分電腦無內建法文語音包的問題) -->
+    <!-- 隱藏的備用音訊播放器 -->
     <audio id="fallbackAudioPlayer" class="hidden"></audio>
 
     <script>
@@ -227,7 +253,18 @@
         let currentFrenchText = "";
         let currentSpeechRate = 0.95;
         let lastAnalyzedRecord = null;
-        let savedNotes = [];
+        let queryHistory = JSON.parse(localStorage.getItem('french_query_history') || '[]');
+        let savedNotes = JSON.parse(localStorage.getItem('french_saved_notes') || '[]');
+
+        // 頁面載入時初始化歷史記錄與筆記本畫面
+        window.onload = function() {
+            renderHistory();
+            renderNotebook();
+        };
+
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
 
         function fillExample(text, scenario, speaker, listener) {
             document.getElementById('userInput').value = text;
@@ -236,18 +273,13 @@
             document.getElementById('listenerGender').value = listener;
         }
 
-        // 切換語速按鍵樣式與數值
         function setSpeechRate(rate, btnElement) {
             currentSpeechRate = rate;
             document.querySelectorAll('.rate-btn').forEach(btn => {
                 btn.className = "rate-btn text-xs px-2.5 py-1 rounded border border-slate-300 bg-white text-slate-700 hover:bg-emerald-50";
             });
             btnElement.className = "rate-btn text-xs px-2.5 py-1 rounded border border-emerald-600 bg-emerald-600 text-white font-bold";
-            
-            // 若當前已有句子，調整語速時自動試唸一次讓使用者有感
-            if (currentFrenchText) {
-                speakFrench();
-            }
+            if (currentFrenchText) { speakFrench(); }
         }
 
         async function analyzeText() {
@@ -269,61 +301,44 @@
             document.getElementById('loadingPanel').classList.remove('hidden');
 
             const ragContext = culturalKnowledgeBase.join("\n");
-
-            const prompt = `你是一位精通台灣文化與法國社會語境的高級法文翻譯專家。
-現在使用者輸入了一句專屬句子，請「完全針對這句話的具體語意」進行翻譯，切勿套用無關的模板！
-語境參數：
-- 社交場景：「${scenario}」
-- 說話者性別：「${speaker}」
-- 對話對象性別：「${listener}」
-
-參考【法國文化 RAG 知識庫】：
-${ragContext}
-
-使用者輸入的句子：「${input}」
-
+            const prompt = `你是一位精通台灣文化與法國社會語境的高級法文翻譯專家。請完全針對這句話『${input}』進行翻譯與文化分析。
+語境參數：- 社交場景：「${scenario}」- 說話者性別：「${speaker}」- 對話對象性別：「${listener}」
+參考知識庫：\n${ragContext}
 請嚴格只回傳一個合法的 JSON 物件（不要 markdown 標記），包含以下 5 個欄位：
 {
-  "literal": "針對『${input}』這句話，給出逐字直譯的法文句子，並用繁體中文說明這樣講在性別文法或禮貌上有什麼盲點",
-  "french_only": "針對『${input}』這句話，結合法國文化、場景與說話者性別後的『純法文道地句子』（只放純法文，不要任何中文或括號，供語音朗讀）",
-  "cultural": "給出最道地、得體的法文句子，並在下方用繁體中文標註陰陽性拼寫變化與敬語重點",
-  "risk": "評估原句若直接翻譯在該情境下的社交風險，僅能填寫：低風險、中度風險、高風險雷區",
-  "analysis": "用流暢的台灣繁體中文，針對『${input}』深入解析背後的法國文化潛規則、陰陽性性別文法變化原因以及語氣差異（約 100 字）"
+  "literal": "逐字直譯的法文句子，並用繁體中文說明這樣講在性別文法或禮貌上有什麼盲點",
+  "french_only": "結合法國文化與說話者性別後的『純法文道地句子』（只放純法文，供語音朗讀）",
+  "cultural": "最道地、得體的法文句子，並附上陰陽性拼寫變化與敬語重點",
+  "risk": "社交風險，僅能填寫：低風險、中度風險、高風險雷區",
+  "analysis": "用繁體中文深入解析背後的法國文化潛規則與陰陽性性別文法（約 100 字）"
 }`;
 
             try {
                 let rawText = "";
-
-                // 1. 若使用者有填寫自己的 Gemini API Key，優先走官方高速通道
                 if (customKey) {
                     const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${customKey}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: prompt }] }]
-                        })
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                     });
-                    if (!geminiRes.ok) throw new Error("Gemini API Key 無效或額度已滿");
+                    if (!geminiRes.ok) throw new Error("Gemini API Key 無效");
                     const geminiData = await geminiRes.json();
                     rawText = geminiData.candidates[0].content.parts[0].text;
                 } else {
-                    // 2. 否則走免費公開 GET/POST 端點 (加入隨機 seed 避免快取回傳重複句子)
                     const randomSeed = Math.floor(Math.random() * 100000);
-                    const encodedPrompt = encodeURIComponent(prompt + `\n(RequestID: ${randomSeed})`);
+                    const encodedPrompt = encodeURIComponent(prompt + `\n(ID: ${randomSeed})`);
                     const pubRes = await fetch(`https://text.pollinations.ai/${encodedPrompt}?model=openai&seed=${randomSeed}`);
-                    if (!pubRes.ok) throw new Error("公開節點忙碌");
+                    if (!pubRes.ok) throw new Error("節點忙碌");
                     rawText = await pubRes.text();
                 }
 
                 const jsonMatch = rawText.match(/\{[\s\S]*\}/);
                 if (!jsonMatch) throw new Error("格式解析異常");
-
                 const data = JSON.parse(jsonMatch[0]);
                 displayResult(input, scenario, speaker, listener, data);
 
             } catch (error) {
-                console.warn("雲端節點繁忙，啟用本地多句型智慧語意引擎...", error);
-                // 3. 改良版智慧動態語意引擎：根據使用者輸入的不同關鍵字動態組合，絕不出現「前面字都一樣」的狀況！
+                console.warn("啟用智慧動態語意備用引擎...", error);
                 const dynamicData = generateSmartDynamicResponse(input, scenario, speaker, listener);
                 displayResult(input, scenario, speaker, listener, dynamicData);
             } finally {
@@ -332,63 +347,29 @@ ${ragContext}
             }
         }
 
-        // 動態多句型分析引擎（確保即使無網路或公開 API 塞車，不同輸入也會產生完全不同且精準的結果）
         function generateSmartDynamicResponse(input, scenario, speaker, listener) {
             const isFemale = speaker.includes("女性");
             const isFormal = scenario.includes("商業") || scenario.includes("職場") || scenario.includes("校園") || listener.includes("Monsieur") || listener.includes("Madame");
             const title = listener.includes("女性") ? "Madame" : (listener.includes("男性") ? "Monsieur" : "");
 
             if (input.includes("累") || input.includes("派對") || input.includes("不想去")) {
-                const fr = isFemale 
-                    ? `Je suis vraiment fatiguée aujourd'hui, ça ne me dit rien d'aller à la fête.`
-                    : `Je suis vraiment fatigué aujourd'hui, ça ne me dit rien d'aller à la fête.`;
+                const fr = isFemale ? `Je suis vraiment fatiguée aujourd'hui, ça ne me dit rien d'aller à la fête.` : `Je suis vraiment fatigué aujourd'hui, ça ne me dit rien d'aller à la fête.`;
                 return {
-                    literal: `Je suis fatigué et je ne veux pas aller à la fête. (直譯過於生硬，且未依說話者性別調整字尾，直接說 je ne veux pas 顯得抗拒且不禮貌)`,
+                    literal: `Je suis fatigué et je ne veux pas aller à la fête. (直譯過於生硬，未依性別調整字尾)`,
                     french_only: fr,
-                    cultural: `${fr}\n（重點：${isFemale ? "女性說話者形容詞 fatiguée 字尾需加 e" : "男性說話者使用陽性 fatigué"}，並用 ça ne me dit rien 委婉表達沒興致）`,
+                    cultural: `${fr}\n（重點：${isFemale ? "女性形容詞 fatiguée 字尾加 e" : "男性使用 fatigué"}，用 ça ne me dit rien 委婉表達）`,
                     risk: "高風險雷區",
-                    analysis: `法國人在拒絕社交邀約時極重視保留雙方顏面。直接說「我不想去 (Je ne veux pas)」語氣過於強硬；改用「這對我沒什麼吸引力 (Ça ne me dit rien)」既自然又得體。此外，法文形容詞需配合說話者生理性別進行陰陽性變化。`
-                };
-            } else if (input.includes("認識") || input.includes("實習") || input.includes("你好") || input.includes("介紹")) {
-                const fr = isFemale
-                    ? `Bonjour ${title}, enchantée de faire votre connaissance. Je suis la nouvelle stagiaire.`
-                    : `Bonjour ${title}, enchanté de faire votre connaissance. Je suis le nouveau stagiaire.`;
-                return {
-                    literal: `Salut, je suis le nouveau stagiaire. (在職場或初次見面用 Salut 太隨便，且冠詞與形容詞預設為陽性，對女性說話者而言是文法錯誤)`,
-                    french_only: fr,
-                    cultural: `${fr}\n（重點：使用敬語 votre 與尊稱 ${title}；${isFemale ? "女性用 enchantée 與 la nouvelle" : "男性用 enchanté 與 le nouveau"}）`,
-                    risk: "高風險雷區",
-                    analysis: `在法國職場或正式場合見面，必須使用 Bonjour 搭配 Monsieur/Madame，並全程使用敬語 Vous（votre）。自我介紹時，冠詞（le/la）與形容詞（nouveau/nouvelle、enchanté/enchantée）皆須嚴格隨說話者性別變化。`
-                };
-            } else if (input.includes("點") || input.includes("牛排") || input.includes("紅酒") || input.includes("要")) {
-                const fr = `Bonjour ${title}, je voudrais un steak et un verre de vin rouge, s'il vous plaît.`;
-                return {
-                    literal: `Je veux un steak et un verre de vin rouge. (直接用 Je veux「我要」在法文中屬於命令語氣，對服務生極度不禮貌，且缺少問候語)`,
-                    french_only: fr,
-                    cultural: `${fr}\n（重點：先說 Bonjour 問候，用條件式 Je voudrais 取代命令式 Je veux，句尾加上 s'il vous plaît）`,
-                    risk: "中度風險",
-                    analysis: `法國餐廳文化非常重視對服務人員的尊重。點餐前若沒有先說 Bonjour 直接點菜，常會遭到冷淡對待；使用條件式「Je voudrais（我想要...）」搭配「s'il vous plaît」才是道地的法式餐桌禮儀。`
-                };
-            } else if (input.includes("教授") || input.includes("老師") || input.includes("討論") || input.includes("有空")) {
-                const fr = `Bonjour ${title}, auriez-vous un moment disponible ce vendredi après-midi pour en discuter ?`;
-                return {
-                    literal: `Bonjour professeur, tu as du temps ce vendredi ? (對師長使用 tu 屬於嚴重越矩，且直接問「你有時間嗎」缺乏法式書信的委婉禮貌)`,
-                    french_only: fr,
-                    cultural: `${fr}\n（重點：稱呼師長直接用 ${title} 而不叫 Professeur，並使用條件式 auriez-vous 展現最高敬意）`,
-                    risk: "高風險雷區",
-                    analysis: `法國大學文化中，學生對教授必須使用「Monsieur / Madame」而非直接稱呼職銜 Professeur，且務必使用敬語 Vous 與條件式疑問句（Auriez-vous...）來提出請求，展現學術禮儀。`
+                    analysis: `法國人拒絕社交邀約時避免直接說「我不想去 (Je ne veux pas)」，改用「這對我沒什麼吸引力 (Ça ne me dit rien)」既自然又得體。`
                 };
             } else {
-                // 針對其他任意輸入句子的動態語境重構
-                const politePrefix = isFormal ? `Bonjour ${title}, excusez-moi de vous déranger. ` : `Coucou ! Dis-moi, `;
-                const politeSuffix = isFormal ? `, s'il vous plaît.` : ` !`;
-                const fr = `${politePrefix}à propos de « ${input} », qu'en pensez-${isFormal ? "vous" : "tu"}${politeSuffix}`;
+                const politePrefix = isFormal ? `Bonjour ${title}, excusez-moi. ` : `Coucou ! `;
+                const fr = `${politePrefix}à propos de « ${input} », qu'en pensez-${isFormal ? "vous" : "tu"} ?`;
                 return {
-                    literal: `Traduction directe de "${input}" (逐字直譯忽略了「${scenario}」的社交距離與語氣緩衝)`,
+                    literal: `Traduction directe de "${input}" (逐字直譯忽略社交距離與語氣緩衝)`,
                     french_only: fr,
-                    cultural: `${fr}\n（重點：已根據「${scenario}」自動切換為${isFormal ? "敬語 Vous 與正式開場白" : "平輩親切語氣 Tu"}，並兼顧${speaker}表達習慣）`,
+                    cultural: `${fr}\n（重點：已根據「${scenario}」自動調整為${isFormal ? "敬語 Vous" : "平輩 Tu"}）`,
                     risk: isFormal ? "中度風險" : "低風險",
-                    analysis: `針對您輸入的「${input}」，在「${scenario}」情境下，法國人不會直接拋出核心訴求，而是會先加上禮貌開場白（${isFormal ? "Excusez-moi de vous déranger" : "Dis-moi"}）作為語氣緩衝，並依據對象關係精準切換 Tu 與 Vous。`
+                    analysis: `在「${scenario}」情境下，法國人通常會加上禮貌開場白並精準切換 Tu 與 Vous，以確保溝通得體。`
                 };
             }
         }
@@ -400,17 +381,24 @@ ${ragContext}
             
             currentFrenchText = data.french_only || "";
 
-            // 儲存當前紀錄供筆記本使用
             lastAnalyzedRecord = {
+                id: Date.now(),
                 original: input,
                 scenario: scenario,
                 speaker: speaker,
+                listener: listener,
                 french: currentFrenchText,
-                culturalDetail: data.cultural,
+                literal: data.literal,
                 risk: data.risk || "中度風險",
                 analysis: data.analysis,
-                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                timestamp: new Date().toLocaleString([], {month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'})
             };
+
+            // 自動登錄至歷史記錄並存入 LocalStorage
+            queryHistory.unshift(lastAnalyzedRecord);
+            if(queryHistory.length > 50) queryHistory.pop(); // 最多保留 50 筆
+            localStorage.setItem('french_query_history', JSON.stringify(queryHistory));
+            renderHistory();
 
             const riskBadge = document.getElementById('riskBadge');
             const riskText = data.risk || "中度風險";
@@ -429,17 +417,77 @@ ${ragContext}
             document.getElementById('resultPanel').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // 雙重語音播放引擎：解決部分瀏覽器沒裝法文語音包導致無聲的問題
-        function speakFrench() {
-            if (!currentFrenchText) {
-                alert("目前沒有可朗讀的法文句子！");
+        // ================= 📜 歷史登錄記錄功能 =================
+        function renderHistory() {
+            document.getElementById('historyCount').innerText = queryHistory.length;
+            const listEl = document.getElementById('historyList');
+            
+            if (queryHistory.length === 0) {
+                listEl.innerHTML = `<p class="text-center text-slate-400 py-4 italic">尚無歷史登錄記錄，開始查詢後會自動登錄於此 ✨</p>`;
                 return;
             }
 
+            listEl.innerHTML = queryHistory.map((item) => `
+                <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3 hover:bg-indigo-50/30 transition">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">${item.scenario}</span>
+                            <span class="text-xs text-slate-400">${item.timestamp}</span>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded ${item.risk.includes('高') ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">${item.risk}</span>
+                        </div>
+                        <p class="text-xs text-slate-700"><b>中：</b>${item.original}</p>
+                        <p class="text-xs text-emerald-800 font-bold"><b>法：</b>${item.french}</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-end md:self-center">
+                        <button onclick="loadHistoryItem(${item.id})" class="text-xs bg-white text-indigo-600 border border-indigo-200 px-2.5 py-1.5 rounded-lg hover:bg-indigo-50 font-medium">
+                            🔍 載入檢視
+                        </button>
+                        <button onclick="deleteHistoryItem(${item.id})" class="text-xs text-slate-400 hover:text-red-500 px-1">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadHistoryItem(id) {
+            const item = queryHistory.find(h => h.id === id);
+            if (!item) return;
+            lastAnalyzedRecord = item;
+            currentFrenchText = item.french;
+
+            document.getElementById('scenarioSelect').value = item.scenario;
+            document.getElementById('userInput').value = item.original;
+            document.getElementById('literalText').innerText = item.literal;
+            document.getElementById('culturalText').innerText = item.french;
+            document.getElementById('analysisText').innerText = item.analysis;
+
+            const riskBadge = document.getElementById('riskBadge');
+            riskBadge.innerText = item.risk;
+            riskBadge.className = item.risk.includes('高') ? "px-3 py-1 bg-red-600 text-white rounded-full text-xs font-bold" : "px-3 py-1 bg-amber-500 text-white rounded-full text-xs font-bold";
+
+            document.getElementById('resultPanel').classList.remove('hidden');
+            document.getElementById('resultPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteHistoryItem(id) {
+            queryHistory = queryHistory.filter(h => h.id !== id);
+            localStorage.setItem('french_query_history', JSON.stringify(queryHistory));
+            renderHistory();
+        }
+
+        function clearHistory() {
+            if(confirm("確定要清空所有歷史登錄記錄嗎？")) {
+                queryHistory = [];
+                localStorage.removeItem('french_query_history');
+                renderHistory();
+            }
+        }
+
+        // ================= 語音朗讀功能 =================
+        function speakFrench() {
+            if (!currentFrenchText) { alert("目前沒有可朗讀的法文句子！"); return; }
             const statusEl = document.getElementById('audioStatus');
             statusEl.innerText = "正在播放發音...";
 
-            // 引擎 1：優先嘗試瀏覽器原生 Web Speech API
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const voices = window.speechSynthesis.getVoices();
@@ -455,138 +503,82 @@ ${ragContext}
                     return;
                 }
             }
-
-            // 引擎 2：若電腦未安裝法文語音包，自動切換至線上法文 TTS 音訊流
             playOnlineTTSFallback(statusEl);
         }
 
         function playOnlineTTSFallback(statusEl) {
             const audioPlayer = document.getElementById('fallbackAudioPlayer');
             const encodedText = encodeURIComponent(currentFrenchText);
-            // 使用 Google Translate 公開 TTS 端點作為備援音訊流
             audioPlayer.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=fr&client=tw-ob`;
             audioPlayer.playbackRate = currentSpeechRate;
             audioPlayer.play()
-                .then(() => {
-                    statusEl.innerText = "雲端法文發音播放中 🔊";
-                    audioPlayer.onended = () => { statusEl.innerText = "播放完畢 ✓"; };
-                })
-                .catch(err => {
-                    console.error(err);
-                    statusEl.innerText = "⚠️ 請確認裝置未靜音";
-                });
+                .then(() => { statusEl.innerText = "雲端法文發音播放中 🔊"; audioPlayer.onended = () => { statusEl.innerText = "播放完畢 ✓"; }; })
+                .catch(() => { statusEl.innerText = "⚠️ 請確認裝置未靜音"; });
         }
 
-        // 預先載入瀏覽器語音列表
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
-        }
-
-        // ================= 筆記本整理與匯出功能 =================
+        // ================= 筆記本管理 =================
         function addToNotebook() {
             if (!lastAnalyzedRecord) return;
-            
-            // 避免重複加入同一句
             const exists = savedNotes.some(n => n.original === lastAnalyzedRecord.original && n.french === lastAnalyzedRecord.french);
-            if (exists) {
-                alert("這句話已經在你的系列筆記本裡面囉！");
-                return;
-            }
+            if (exists) { alert("這句話已經在筆記本中了！"); return; }
 
             savedNotes.push(lastAnalyzedRecord);
+            localStorage.setItem('french_saved_notes', JSON.stringify(savedNotes));
             document.getElementById('noteCount').innerText = savedNotes.length;
             renderNotebook();
-            
-            // 平滑捲動到下方筆記本讓使用者看到成果
-            document.getElementById('notebookSection').scrollIntoView({ behavior: 'smooth' });
+            scrollToSection('notebookSection');
         }
 
         function renderNotebook() {
+            document.getElementById('noteCount').innerText = savedNotes.length;
             const listEl = document.getElementById('notebookList');
             if (savedNotes.length === 0) {
-                listEl.innerHTML = `<p class="text-center text-slate-400 py-4 italic">目前筆記本還是空的喔！快輸入句子並點擊「加入系列筆記」吧 ✨</p>`;
+                listEl.innerHTML = `<p class="text-center text-slate-400 py-4 italic">收藏筆記本目前是空的喔！快去收藏喜歡的句子吧 ✨</p>`;
                 return;
             }
 
             listEl.innerHTML = savedNotes.map((note, idx) => `
                 <div class="p-4 bg-amber-50/50 border border-amber-200 rounded-xl space-y-1.5 relative">
                     <div class="flex justify-between items-start">
-                        <span class="text-xs font-bold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded">#${idx + 1} | ${note.scenario} (${note.speaker.split(' ')[0]})</span>
+                        <span class="text-xs font-bold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded">#${idx + 1} | ${note.scenario}</span>
                         <button onclick="removeNote(${idx})" class="text-xs text-slate-400 hover:text-red-500">✕ 移除</button>
                     </div>
-                    <p class="text-slate-600 text-xs"><b>中文原意：</b>${note.original}</p>
+                    <p class="text-slate-600 text-xs"><b>中文：</b>${note.original}</p>
                     <p class="text-emerald-800 font-bold text-base">🇫🇷 ${note.french}</p>
-                    <p class="text-slate-600 text-xs leading-relaxed"><b>文化筆記：</b>${note.analysis}</p>
+                    <p class="text-slate-600 text-xs leading-relaxed"><b>解析：</b>${note.analysis}</p>
                 </div>
             `).join('');
         }
 
         function removeNote(index) {
             savedNotes.splice(index, 1);
-            document.getElementById('noteCount').innerText = savedNotes.length;
+            localStorage.setItem('french_saved_notes', JSON.stringify(savedNotes));
             renderNotebook();
         }
 
         function copySingleNote() {
             if (!lastAnalyzedRecord) return;
-            const text = `【AI 法文文化翻譯筆記】\n情境：${lastAnalyzedRecord.scenario} (${lastAnalyzedRecord.speaker})\n中文：${lastAnalyzedRecord.original}\n道地法文：${lastAnalyzedRecord.french}\n文化解析：${lastAnalyzedRecord.analysis}`;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("✅ 已成功複製這句話的筆記！你可以直接貼到 Word 或 Notion 中。");
-            });
+            const text = `【AI 法文翻譯筆記】\n情境：${lastAnalyzedRecord.scenario}\n中文：${lastAnalyzedRecord.original}\n法文：${lastAnalyzedRecord.french}\n解析：${lastAnalyzedRecord.analysis}`;
+            navigator.clipboard.writeText(text).then(() => { alert("✅ 已成功複製筆記！"); });
         }
 
         function copyAllNotes() {
-            if (savedNotes.length === 0) {
-                alert("筆記本目前是空的，請先加入句子！");
-                return;
-            }
-            const fullText = "=== 🇫🇷 AI 法文文化翻譯官：系列學習筆記 ===\n\n" + 
-                savedNotes.map((n, i) => `${i + 1}. 【${n.scenario}】\n- 中文原句：${n.original}\n- 道地法文：${n.french}\n- 文化解析：${n.analysis}\n`).join("\n----------------------------------------\n\n");
-            
-            navigator.clipboard.writeText(fullText).then(() => {
-                alert(`✅ 已成功複製全部 ${savedNotes.length} 筆系列筆記到剪貼簿！`);
-            });
+            if (savedNotes.length === 0) { alert("筆記本是空的！"); return; }
+            const fullText = "=== 🇫🇷 AI 法文文化翻譯官：系列學習筆記 ===\n\n" + savedNotes.map((n, i) => `${i + 1}. 【${n.scenario}】\n- 中文：${n.original}\n- 法文：${n.french}\n- 解析：${n.analysis}\n`).join("\n----------------------------------------\n\n");
+            navigator.clipboard.writeText(fullText).then(() => { alert("✅ 已成功複製全部筆記！"); });
         }
 
         function downloadNotesDoc() {
-            if (savedNotes.length === 0) {
-                alert("筆記本目前是空的，請先點擊「加入系列筆記」再匯出文件！");
-                return;
-            }
-
-            // 產生相容於 Microsoft Word 的 HTML 格式 .doc 檔案
-            const htmlContent = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head><meta charset='utf-8'><title>AI 法文文化學習筆記</title></head>
-                <body style="font-family: 'Microsoft JhengHei', sans-serif;">
-                    <h1 style="color: #1e1b4b;">🇫🇷 AI 法文文化翻譯官 — 系列學習筆記</h1>
-                    <p style="color: #64748b;">匯出時間：${new Date().toLocaleString()}</p>
-                    <hr/>
-                    ${savedNotes.map((n, i) => `
-                        <div style="margin-bottom: 20px; padding: 12px; border: 1px solid #cbd5e1; background-color: #f8fafc;">
-                            <h3 style="color: #312e81; margin-top: 0;">筆記 #${i + 1}：【${n.scenario}】 (${n.speaker})</h3>
-                            <p><strong>中文原意：</strong>${n.original}</p>
-                            <p style="color: #065f46; font-size: 16px;"><strong>道地法文：</strong>${n.french}</p>
-                            <p><strong>社交風險：</strong>${n.risk}</p>
-                            <p><strong>文化與陰陽性解析：</strong>${n.analysis}</p>
-                        </div>
-                    `).join('')}
-                </body>
-                </html>
-            `;
-
+            if (savedNotes.length === 0) { alert("筆記本是空的！"); return; }
+            const htmlContent = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body style="font-family: 'Microsoft JhengHei';"><h1>🇫🇷 AI 法文文化系列筆記</h1><hr/>${savedNotes.map((n, i) => `<div style="margin-bottom: 15px; padding: 10px; border: 1px solid #ddd;"><h3>#${i+1} 【${n.scenario}】</h3><p><strong>中文：</strong>${n.original}</p><p style="color: green;"><strong>法文：</strong>${n.french}</p><p><strong>解析：</strong>${n.analysis}</p></div>`).join('')}</body></html>`;
             const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `AI法文文化系列筆記_${new Date().toISOString().slice(0,10)}.doc`;
+            link.download = `AI法文學習筆記_${new Date().toISOString().slice(0,10)}.doc`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-        }
-
-        function toggleNotebookModal() {
-            document.getElementById('notebookSection').scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
