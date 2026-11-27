@@ -217,12 +217,12 @@
                     </h2>
                     <p class="text-xs text-slate-500">點擊上方解析結果的「收藏至系列筆記」，即可彙整成講義</p>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                     <button onclick="copyAllNotes()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-lg transition">
-                        📋 複製全部筆記
+                        📋 一鍵複製全部筆記
                     </button>
-                    <button onclick="downloadNotesDoc()" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-semibold px-3 py-2 rounded-lg transition shadow-xs">
-                        📥 匯出成文件 (.doc)
+                    <button onclick="downloadNotesTxt()" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-semibold px-3 py-2 rounded-lg transition shadow-xs">
+                        📥 下載筆記檔案 (.txt)
                     </button>
                 </div>
             </div>
@@ -256,7 +256,6 @@
         let queryHistory = JSON.parse(localStorage.getItem('french_query_history') || '[]');
         let savedNotes = JSON.parse(localStorage.getItem('french_saved_notes') || '[]');
 
-        // 頁面載入時初始化歷史記錄與筆記本畫面
         window.onload = function() {
             renderHistory();
             renderNotebook();
@@ -394,9 +393,8 @@
                 timestamp: new Date().toLocaleString([], {month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'})
             };
 
-            // 自動登錄至歷史記錄並存入 LocalStorage
             queryHistory.unshift(lastAnalyzedRecord);
-            if(queryHistory.length > 50) queryHistory.pop(); // 最多保留 50 筆
+            if(queryHistory.length > 50) queryHistory.pop();
             localStorage.setItem('french_query_history', JSON.stringify(queryHistory));
             renderHistory();
 
@@ -417,7 +415,6 @@
             document.getElementById('resultPanel').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ================= 📜 歷史登錄記錄功能 =================
         function renderHistory() {
             document.getElementById('historyCount').innerText = queryHistory.length;
             const listEl = document.getElementById('historyList');
@@ -482,7 +479,6 @@
             }
         }
 
-        // ================= 語音朗讀功能 =================
         function speakFrench() {
             if (!currentFrenchText) { alert("目前沒有可朗讀的法文句子！"); return; }
             const statusEl = document.getElementById('audioStatus');
@@ -516,7 +512,6 @@
                 .catch(() => { statusEl.innerText = "⚠️ 請確認裝置未靜音"; });
         }
 
-        // ================= 筆記本管理 =================
         function addToNotebook() {
             if (!lastAnalyzedRecord) return;
             const exists = savedNotes.some(n => n.original === lastAnalyzedRecord.original && n.french === lastAnalyzedRecord.french);
@@ -568,14 +563,17 @@
             navigator.clipboard.writeText(fullText).then(() => { alert("✅ 已成功複製全部筆記！"); });
         }
 
-        function downloadNotesDoc() {
+        // 改用下載乾淨的 .txt 純文字檔，手機與電腦 100% 完美相容、絕不毀損
+        function downloadNotesTxt() {
             if (savedNotes.length === 0) { alert("筆記本是空的！"); return; }
-            const htmlContent = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body style="font-family: 'Microsoft JhengHei';"><h1>🇫🇷 AI 法文文化系列筆記</h1><hr/>${savedNotes.map((n, i) => `<div style="margin-bottom: 15px; padding: 10px; border: 1px solid #ddd;"><h3>#${i+1} 【${n.scenario}】</h3><p><strong>中文：</strong>${n.original}</p><p style="color: green;"><strong>法文：</strong>${n.french}</p><p><strong>解析：</strong>${n.analysis}</p></div>`).join('')}</body></html>`;
-            const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+            const textContent = "=== AI 法文文化翻譯官：系列學習筆記 ===\n\n" + 
+                savedNotes.map((n, i) => `[筆記 #${i + 1}] 情境：${n.scenario}\n中文原意：${n.original}\n道地法文：${n.french}\n文化解析：${n.analysis}\n----------------------------------------\n`).join("\n");
+
+            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `AI法文學習筆記_${new Date().toISOString().slice(0,10)}.doc`;
+            link.download = `AI法文學習筆記_${new Date().toISOString().slice(0,10)}.txt`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
